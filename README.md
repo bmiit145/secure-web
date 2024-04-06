@@ -29,7 +29,9 @@ This function will disable right-click, keyboard shortcuts, inspect element, pri
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Web Page</title>
-    <script src="node_modules/secure-web/dict/secure-web.js"></script>
+    <script src="node_modules/secure-web/dist/secure-web.js"></script>
+<!--    live link of package -->
+    <script src="https://cdn.jsdelivr.net/npm/secure-web/dist/secure-web.js"></script>
 </head>
 <body>
     <script>
