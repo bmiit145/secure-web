@@ -1,120 +1,156 @@
-// here we will implement the function to prevent user to take screenshot of the web page
-function noScreenshot() {
-    // Disable right click
-    document.addEventListener('contextmenu', event => event.preventDefault());
-    // Disable keyboard shortcuts
-    document.addEventListener('keydown', event => {
-        if (event.ctrlKey && (event.key === 'c' || event.key === 'u' || event.key === 'i' || event.key === 'j' || event.key === 'k' || event.key === 's') || (event.metaKey && (event.key === 'c' || event.key === 'u' || event.key === 'i' || event.key === 'j' || event.key === 'k' || event.key === 's'))) {
-            event.preventDefault();
-        }
-    });
-    // Disable inspect element
-    document.addEventListener('keydown', event => {
-        if ((event.ctrlKey && event.shiftKey && event.key === 'i') || (event.metaKey && event.shiftKey && event.key === 'i')) {
-            event.preventDefault();
-        }
-    });
-    // Disable print screen
-    document.addEventListener('keydown', event => {
-        if ((event.key === 'PrintScreen')) {
-            event.preventDefault();
-        }
-    });
-    // Disable screenshot
-    document.addEventListener('keydown', event => {
-        if ((event.ctrlKey && event.shiftKey && event.key === 's') || (event.ctrlKey && event.key === 's') || (event.metaKey && event.shiftKey && event.key === 's') || (event.metaKey && event.key === 's')) {
-            event.preventDefault();
-        }
-    });
-    // Disable screenshot
-    document.addEventListener('keydown', event => {
-        if ((event.ctrlKey && event.key === 's') || (event.metaKey && event.key === 's')) {
-            event.preventDefault();
-        }
-    });
-    // Disable screenshot
-    document.addEventListener('keydown', event => {
-        if (event.metaKey && event.shiftKey && event.key === 's') {
-            event.preventDefault();
-        }
-    });
-    // Disable screenshot
-    document.addEventListener('keydown', event => {
-        if (event.metaKey && event.key === 's') {
-            event.preventDefault();
-        }
-    });
-    // Disable screenshot
-    document.addEventListener('keydown', event => {
-        if (event.ctrlKey && event.shiftKey && event.key === 'i') {
-            event.preventDefault();
-        }
-    });
-    // Disable screenshot
-    document.addEventListener('keydown', event => {
-        if (event.metaKey && event.shiftKey && event.key === 'i') {
-            event.preventDefault();
-        }
-    });
-    // Disable screenshot
-    document.addEventListener('keydown', event => {
-        if (event.ctrlKey && event.key === 'i') {
-            event.preventDefault();
-        }
-    });
-    // Disable screenshot
-    document.addEventListener('keydown', event => {
-        if (event.metaKey && event.key === 'i') {
-            event.preventDefault();
-        }
-    });
-    // Disable screenshot
-    document.addEventListener('keydown', event => {
-        if ((event.ctrlKey && event.shiftKey && event.key === 'j') || (event.ctrlKey && event.key === 'j') || (event.metaKey && event.shiftKey && event.key === 'j') || (event.metaKey && event.key === 'j') || (event.ctrlKey && event.shiftKey && event.key === 'k') || (event.ctrlKey && event.key === 'k') || (event.metaKey && event.shiftKey && event.key === 'k') || (event.metaKey && event.key === 'k')) {
-            event.preventDefault();
-        }
-    });
+function noScreenshot(options) {
+    options = options || {};
 
-    // disable screenshot for mac users
-    document.addEventListener('keydown', event => {
-        if ((event.metaKey && event.shiftKey && event.key === 'j') || (event.metaKey && event.shiftKey && event.key === '4')) {
-            event.preventDefault();
-            alert('Screenshot is disabled');
-        }
+    const {
+        disableRightClick = true,
+        disableKeyboardShortcuts = true,
+        disableInspectElement = true,
+        disablePrintScreen = true,
+        disableScreenshot = true,
+        disableFunctionKeys = true,
+        disableCtrlF4 = true,
+        mouseLeave = true,
+        ctrlOverlay = true,
+        altOverlay = false,
+        shiftOverlay = false,
+    } = options;
 
-        if (event.metaKey && event.key === '$') {
-            event.preventDefault(); // Prevent the default action
-        }
+    if (disableRightClick) {
+        document.addEventListener('contextmenu', event => event.preventDefault());
+    }
 
-    });
-    document.addEventListener('keydown', event => {
-        if (event.metaKey && event.shiftKey && event.key === 'k') {
-            event.preventDefault();
-        }
-    });
-    // disable all function key
-    document.addEventListener('keydown', event => {
-        if (event.key === 'F1' || event.key === 'F2' || event.key === 'F3' || event.key === 'F5' || event.key === 'F6' || event.key === 'F7' || event.key === 'F8' || event.key === 'F9' || event.key === 'F10' || event.key === 'F11' || event.key === 'F12') {
-            event.preventDefault();
-        }
-    });
+    if (disableKeyboardShortcuts) {
+        document.addEventListener('keydown', event => {
+            // Disable keyboard shortcuts
+            if ((event.ctrlKey && (event.key === 'c' || event.key === 'u' || event.key === 'i' || event.key === 'j' || event.key === 'k' || event.key === 's')) || (event.metaKey && (event.key === 'c' || event.key === 'u' || event.key === 'i' || event.key === 'j' || event.key === 'k' || event.key === 's'))) {
+                event.preventDefault();
+            }
+        });
 
-    document.addEventListener('keydown', event => {
-        if (event.ctrlKey && event.key === 'F4') {
-            event.preventDefault();
-        }
-    });
+        document.addEventListener('keydown', event => {
+            if ((event.ctrlKey && event.shiftKey && event.key === 's') || (event.ctrlKey && event.key === 's') || (event.metaKey && event.shiftKey && event.key === 's') || (event.metaKey && event.key === 's')) {
+                event.preventDefault();
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if ((event.ctrlKey && event.key === 's') || (event.metaKey && event.key === 's')) {
+                event.preventDefault();
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if (event.metaKey && event.shiftKey && event.key === 's') {
+                event.preventDefault();
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if (event.metaKey && event.key === 's') {
+                event.preventDefault();
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if (event.ctrlKey && event.shiftKey && event.key === 'i') {
+                event.preventDefault();
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if (event.metaKey && event.shiftKey && event.key === 'i') {
+                event.preventDefault();
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if (event.ctrlKey && event.key === 'i') {
+                event.preventDefault();
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if (event.metaKey && event.key === 'i') {
+                event.preventDefault();
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if ((event.ctrlKey && event.shiftKey && event.key === 'j') || (event.ctrlKey && event.key === 'j') || (event.metaKey && event.shiftKey && event.key === 'j') || (event.metaKey && event.key === 'j') || (event.ctrlKey && event.shiftKey && event.key === 'k') || (event.ctrlKey && event.key === 'k') || (event.metaKey && event.shiftKey && event.key === 'k') || (event.metaKey && event.key === 'k')) {
+                event.preventDefault();
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if ((event.metaKey && event.shiftKey && event.key === 'j') || (event.metaKey && event.shiftKey && event.key === '4')) {
+                event.preventDefault();
+            }
 
+            if (event.metaKey && event.key === '$') {
+                event.preventDefault(); // Prevent the default action
+            }
+
+        });
+        document.addEventListener('keydown', event => {
+            if (event.metaKey && event.shiftKey && event.key === 'k') {
+                event.preventDefault();
+            }
+        });
+    }
+
+    if (disableInspectElement) {
+        document.addEventListener('keydown', event => {
+            if ((event.ctrlKey && event.shiftKey && event.key === 'i') || (event.metaKey && event.shiftKey && event.key === 'i')) {
+                event.preventDefault();
+            }
+        });
+    }
+
+    if (disablePrintScreen) {
+        document.addEventListener('keydown', event => {
+            if ((event.key === 'PrintScreen')) {
+                event.preventDefault();
+            }
+        });
+    }
+    if (disableFunctionKeys){
+        document.addEventListener('keydown', event => {
+            if (event.key === 'F1' || event.key === 'F2' || event.key === 'F3' || event.key === 'F5' || event.key === 'F6' || event.key === 'F7' || event.key === 'F8' || event.key === 'F9' || event.key === 'F10' || event.key === 'F11' || event.key === 'F12') {
+                event.preventDefault();
+            }
+        });
+    }
+
+    if (disableCtrlF4) {
+        document.addEventListener('keydown', event => {
+            if (event.ctrlKey && event.key === 'F4') {
+                event.preventDefault();
+            }
+        });
+    }
+
+    if (mouseLeave) {
+        document.addEventListener('mouseleave', () => {
+            overlayScreen(); // Overlay when cursor leaves the window
+        });
+    }
+
+    if (ctrlOverlay) {
+        document.addEventListener('keydown', event => {
+            if (event.ctrlKey || event.metaKey) {
+                overlayScreen();
+            }
+        });
+    }
+
+    if (altOverlay) {
+        document.addEventListener('keydown', event => {
+            if (event.altKey || event.optionsKey) {
+                overlayScreen();
+            }
+    });
+}
+
+if (shiftOverlay) {
     document.addEventListener('keydown', event => {
-        if (event.ctrlKey || event.metaKey) {
+        if (event.shiftKey) {
             overlayScreen();
         }
     });
-
-    document.addEventListener('mouseleave', () => {
-        overlayScreen(); // Overlay when cursor leaves the window
-    }); 
 }
+}
+
 
 function overlayScreen() {
     const overlay = document.createElement('div');
@@ -128,7 +164,7 @@ function overlayScreen() {
     overlay.style.display = 'flex';
     overlay.style.alignItems = 'center';
     overlay.style.justifyContent = 'center';
-    
+
     const message = document.createElement('div');
     message.textContent = 'Press Esc to close. Screenshots are disabled.';
     message.style.fontSize = '24px';
@@ -137,15 +173,15 @@ function overlayScreen() {
     message.style.background = 'rgba(255, 255, 255, 0.9)'; // semi-transparent white background for message
     message.style.borderRadius = '10px'; // Rounded corners for the message box
     message.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.5)'; // Drop shadow for the message box
-    
+
     overlay.appendChild(message);
     document.body.appendChild(overlay);
-    
+
     // Disable pointer events on body while the overlay is active
     document.body.style.pointerEvents = 'none';
-    
+
     document.addEventListener('keydown', escListener);
-    
+
     function escListener(event) {
         if (event.key === 'Escape') {
             document.body.removeChild(overlay);
@@ -154,4 +190,5 @@ function overlayScreen() {
         }
     }
 }
+
 module.exports = noScreenshot;

@@ -1,8 +1,8 @@
 {
   "name": "secure-web",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Introducing Secure-Web, your trusted companion for ensuring unparalleled security and privacy in your online endeavors. Our innovative package encompasses a suite of cutting-edge technologies designed to fortify your web presence against potential threats, including the prevention of user screenshot capture. With Secure-Web, you can confidently navigate the digital landscape knowing that your sensitive information remains shielded from prying eyes. Embrace peace of mind and elevate your online security with Secure-Web today.",
-  "main": "dict/secure-web.js",
+  "main": "old/secure-web.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
