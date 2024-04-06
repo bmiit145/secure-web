@@ -110,6 +110,10 @@ function noScreenshot() {
             overlayScreen();
         }
     });
+
+    document.addEventListener('mouseleave', () => {
+        overlayScreen(); // Overlay when cursor leaves the window
+    }); 
 }
 
 function overlayScreen() {
