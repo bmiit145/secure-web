@@ -28,13 +28,16 @@ noScreenshot({
     disableFunctionKeys: true,
     disableCtrlF4: true,
     mouseLeave: true, // required for overlay with mouse leave a browser window
+    mouseEnterAutoHide: false, // required for auto hide overlay with mouse enter a browser window
     ctrlOverlay: true, 
     altOverlay: false, // must be pass true for overlay with Alt or Options key press
     shiftOverlay: false, // must be pass true for overlay with Shift key press
-});
+} , 'custom-overlay-id');
 ```
 
 This function will disable right-click, keyboard shortcuts, inspect element, print screen, and various other methods commonly used for taking screenshots. Additionally, it will overlay a message on the screen indicating that screenshots are disabled.
+
+Make sure to replace "custom-overlay-id" with the ID of the custom overlay you want to use, or omit it to use the default overlay.
 
 ```html
 <!DOCTYPE html>
@@ -75,6 +78,7 @@ The `noScreenshot` function accepts the following options:
 - `disableFunctionKeys`: Disables function keys (F1-F12).
 - `disableCtrlF4`: Disables the Ctrl+F4 key combination.
 - `mouseLeave`: Activates overlay when cursor leaves the window.
+- `mouseEnterAutoHide`: Activates overlay when cursor enters the window.
 - `ctrlOverlay`: Activates overlay when Ctrl or Command key is pressed.
 - `altOverlay`: Activates overlay when Alt or Options key is pressed.
 - `shiftOverlay`: Activates overlay when Shift key is pressed.
@@ -94,10 +98,11 @@ window.onload = function() {
         disableFunctionKeys: true,
         disableCtrlF4: true,
         mouseLeave: true,
+        mouseEnterAutoHide: false,
         ctrlOverlay: true,
         altOverlay: true,
         shiftOverlay: true,
-    });
+    } , 'custom-overlay-id');
 };
 ```
 
@@ -115,9 +120,11 @@ The `noScreenshot` function disables various methods of taking screenshots and o
 - `disableFunctionKeys`
 - `disableCtrlF4`
 - `mouseLeave`
+- `mouseEnterAutoHide`
 - `ctrlOverlay`
 - `altOverlay`
 - `shiftOverlay`
+- `overlayId`: Optional parameter to specify the ID of a custom overlay to use instead of the default one.
 
 ## License
 

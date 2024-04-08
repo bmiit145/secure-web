@@ -1,4 +1,4 @@
-function noScreenshot(options) {
+function noScreenshot(options , overlayId) {
     options = options || {};
 
     const {
@@ -10,6 +10,7 @@ function noScreenshot(options) {
         disableFunctionKeys = true,
         disableCtrlF4 = true,
         mouseLeave = true,
+        mouseEnterAutoHide = false,
         ctrlOverlay = true,
         altOverlay = false,
         shiftOverlay = false,
@@ -122,14 +123,20 @@ function noScreenshot(options) {
 
     if (mouseLeave) {
         document.addEventListener('mouseleave', () => {
-            overlayScreen(); // Overlay when cursor leaves the window
+            overlayScreen(overlayId); // Overlay when cursor leaves the window
         });
     }
+
+if (mouseEnterAutoHide) {
+    document.addEventListener('mouseenter', () => {
+        HideOverlayScreen(overlayId);
+    });
+}
 
     if (ctrlOverlay) {
         document.addEventListener('keydown', event => {
             if (event.ctrlKey || event.metaKey) {
-                overlayScreen();
+                overlayScreen(overlayId);
             }
         });
     }
@@ -137,7 +144,7 @@ function noScreenshot(options) {
     if (altOverlay) {
         document.addEventListener('keydown', event => {
             if (event.altKey || event.optionsKey) {
-                overlayScreen();
+                overlayScreen(overlayId);
             }
     });
 }
@@ -145,37 +152,68 @@ function noScreenshot(options) {
 if (shiftOverlay) {
     document.addEventListener('keydown', event => {
         if (event.shiftKey) {
-            overlayScreen();
+            overlayScreen(overlayId);
         }
     });
 }
 }
 
+function overlayScreen(overlayId) {
+    if (overlayId) {
+        const customOverlay = document.getElementById(overlayId);
+        if (customOverlay) {
+            customOverlay.style.position = 'fixed';
+            customOverlay.style.top = '0';
+            customOverlay.style.left = '0';
+            customOverlay.style.width = '100%';
+            customOverlay.style.height = '100%';
+            customOverlay.style.zIndex = '9999';
+            customOverlay.style.display = 'flex';
+            customOverlay.style.alignItems = 'center';
+            customOverlay.style.justifyContent = 'center';
 
-function overlayScreen() {
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.background = 'rgba(255, 255, 255, 1)'; // semi-transparent white background
-    overlay.style.zIndex = '9999';
-    overlay.style.display = 'flex';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
+            // Disable pointer events on body while the overlay is active
+            document.body.style.pointerEvents = 'none';
 
-    const message = document.createElement('div');
-    message.textContent = 'Press Esc to close. Screenshots are disabled.';
-    message.style.fontSize = '24px';
-    message.style.color = 'black'; // You can adjust the color as needed
-    message.style.padding = '20px'; // Add padding to the message
-    message.style.background = 'rgba(255, 255, 255, 0.9)'; // semi-transparent white background for message
-    message.style.borderRadius = '10px'; // Rounded corners for the message box
-    message.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.5)'; // Drop shadow for the message box
+            document.addEventListener('keydown', escListener);
 
-    overlay.appendChild(message);
-    document.body.appendChild(overlay);
+            function escListener(event) {
+                if (event.key === 'Escape') {
+                    customOverlay.style.display = 'none'; // Hide the custom overlay
+                    document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
+                    document.removeEventListener('keydown', escListener);
+                }
+            }
+
+            return;
+        }
+    }
+
+        const overlay = document.createElement('div');
+        overlay.id = 'no-screenshot-overlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.background = 'rgba(255, 255, 255, 1)'; // semi-transparent white background
+        overlay.style.zIndex = '9999';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+
+        const message = document.createElement('div');
+        message.textContent = 'Press Esc to close. Screenshots are disabled.';
+        message.style.fontSize = '24px';
+        message.style.color = 'black'; // You can adjust the color as needed
+        message.style.padding = '20px'; // Add padding to the message
+        message.style.background = 'rgba(255, 255, 255, 0.9)'; // semi-transparent white background for message
+        message.style.borderRadius = '10px'; // Rounded corners for the message box
+        message.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.5)'; // Drop shadow for the message box
+
+        overlay.appendChild(message);
+        document.body.appendChild(overlay);
+    }
 
     // Disable pointer events on body while the overlay is active
     document.body.style.pointerEvents = 'none';
@@ -188,7 +226,21 @@ function overlayScreen() {
             document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
             document.removeEventListener('keydown', escListener);
         }
-    }
+}
+
+function HideOverlayScreen(overlayId) {
+        if (overlayId) {
+            const customOverlay = document.getElementById(overlayId);
+            if (customOverlay) {
+                customOverlay.style.display = 'none'; // Hide the custom overlay
+                document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
+                return;
+            }
+        }
+        var overlay = document.getElementById('no-screenshot-overlay');
+        document.body.removeChild(overlay);
+        document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
+    document.removeEventListener('keydown', escListener);
 }
 
 module.exports = noScreenshot;
