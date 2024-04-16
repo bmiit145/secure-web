@@ -104,6 +104,13 @@ function noScreenshot(options , overlayId) {
                 event.preventDefault();
             }
         });
+            document.addEventListener('keyup', (event) => {
+                if (event.key === 'PrintScreen') {
+                    navigator.clipboard.writeText('')
+                    overlayScreen()
+                }
+            })
+
     }
     if (disableFunctionKeys){
         document.addEventListener('keydown', event => {
