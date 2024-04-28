@@ -1,6 +1,6 @@
 {
   "name": "secure-web",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Secure-Web is an npm package that prevents users from taking screenshots of your web page by securing it against various methods of screenshot capture. With customizable options to tailor the security measures according to your needs, Secure-Web ensures that your sensitive information remains protected and inaccessible to unauthorized individuals. Embrace the power of Secure-Web and take control of your online security today.",
   "main": "dist/secure-web.js",
   "scripts": {
@@ -11,14 +11,35 @@
     "url": "https://github.com/bmiit145/secure-web.git"
   },
   "keywords": [
-    "Secure-Web",  "noscreenshot",
+    "Secure-Web",
+    "noscreenshot",
     "prevent-screenshot",
-    "security", "privacy", "online-endeavors", "package", "cutting-edge-technologies", "web-presence", "threats", "prevention", "user-screenshot-capture", "customizable-options", "sensitive-information", "shielded", "prying-eyes", "peace-of-mind", "elevate", "npm", "web-page", "protection"
+    "security",
+    "privacy",
+    "online-endeavors",
+    "package",
+    "cutting-edge-technologies",
+    "web-presence",
+    "threats",
+    "prevention",
+    "user-screenshot-capture",
+    "customizable-options",
+    "sensitive-information",
+    "shielded",
+    "prying-eyes",
+    "peace-of-mind",
+    "elevate",
+    "npm",
+    "web-page",
+    "protection"
   ],
   "author": "Priyank Sutariya",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/bmiit145/secure-web/issues"
   },
-  "homepage": "https://github.com/bmiit145/secure-web#readme"
+  "homepage": "https://github.com/bmiit145/secure-web#readme",
+  "dependencies": {
+    "jsdom": "^24.0.0"
+  }
 }

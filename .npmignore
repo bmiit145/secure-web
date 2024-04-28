@@ -1,0 +1,7 @@
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+SECURITY.md
+node_modules
+.idea
+.vscode
+package-lock.json
