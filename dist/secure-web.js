@@ -173,15 +173,18 @@ function noScreenshot(options, overlayId) {
     // Disable pointer events on body while the overlay is active
 
     document.body.style.pointerEvents = 'none';
-
     document.addEventListener('keydown', escListener);
+
+
+    // mobile screenshot prevention
+    window.addEventListener('touchstart', handleTouchStart);
 
     function escListener(event) {
         if (event.key === 'Escape') {
             HideOverlayScreen(overlayId);
             // document.body.removeChild(overlay);
             // document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
-            // document.removeEventListener('keydown', escListener);
+            //document.removeEventListener('keydown', escListener);
         }
     }
 
@@ -258,6 +261,19 @@ function HideOverlayScreen(overlayId) {
     document.body.removeChild(overlay);
     document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
     //document.removeEventListener('keydown', escListener);
+}
+
+function handleTouchStart(event) {
+    const now = new Date().getTime();
+    const timeSinceLastTouch = now - lastTouchTime;
+    lastTouchTime = now;
+
+    // Check if it's a three-finger touch and the time interval between touches is short
+    if (event.touches.length === 3 && timeSinceLastTouch < 250) {
+        event.preventDefault();
+
+        alert('Three-finger screenshot prevented');
+    }
 }
 
 if (isNode) {
