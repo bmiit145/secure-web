@@ -224,7 +224,9 @@ function overlayScreen(overlayId) {
 
     if (document.getElementById('no-screenshot-overlay')) {
         document.getElementById('no-screenshot-overlay').style.display = 'flex';
+        return;
     }
+    
     const overlay = document.createElement('div');
     overlay.id = 'no-screenshot-overlay';
     overlay.style.position = 'fixed';
