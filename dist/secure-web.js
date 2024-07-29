@@ -101,6 +101,9 @@ function noScreenshot(options, overlayId) {
             if ((event.ctrlKey && event.shiftKey && event.key === 'i') || (event.metaKey && event.shiftKey && event.key === 'i')) {
                 event.preventDefault();
             }
+            if ((event.ctrlKey && event.shiftKey && event.key === 'c') || (event.metaKey && event.shiftKey && event.key === 'c')) {
+                event.preventDefault();
+            }
         });
     }
 
@@ -118,6 +121,7 @@ function noScreenshot(options, overlayId) {
         })
 
     }
+
     if (disableFunctionKeys) {
         document.addEventListener('keydown', event => {
             if (event.key === 'F1' || event.key === 'F2' || event.key === 'F3' || event.key === 'F5' || event.key === 'F6' || event.key === 'F7' || event.key === 'F8' || event.key === 'F9' || event.key === 'F10' || event.key === 'F11' || event.key === 'F12') {
@@ -136,7 +140,7 @@ function noScreenshot(options, overlayId) {
 
     if (mouseLeave) {
         document.addEventListener('mouseleave', () => {
-            overlayScreen(overlayId); // Overlay when cursor leaves the window
+            overlayScreen(overlayId); 
         });
     }
 
@@ -171,8 +175,8 @@ function noScreenshot(options, overlayId) {
     }
 
     // Disable pointer events on body while the overlay is active
-
-    document.body.style.pointerEvents = 'none';
+    // document.body.style.pointerEvents = 'none';
+    document.body.style.pointerEvents = 'auto';
 
     document.addEventListener('keydown', escListener);
 
@@ -197,7 +201,7 @@ function overlayScreen(overlayId) {
             customOverlay.style.width = '100%';
             customOverlay.style.height = '100%';
             customOverlay.style.zIndex = '9999';
-            customOverlay.style.display = 'flex';
+            customOverlay.style.display = 'block';
             customOverlay.style.alignItems = 'center';
             customOverlay.style.justifyContent = 'center';
 
@@ -218,6 +222,9 @@ function overlayScreen(overlayId) {
         }
     }
 
+    if (document.getElementById('no-screenshot-overlay')) {
+        document.getElementById('no-screenshot-overlay').style.display = 'flex';
+    }
     const overlay = document.createElement('div');
     overlay.id = 'no-screenshot-overlay';
     overlay.style.position = 'fixed';
@@ -242,6 +249,7 @@ function overlayScreen(overlayId) {
 
     overlay.appendChild(message);
     document.body.appendChild(overlay);
+    document.body.style.pointerEvents = 'none';
 }
 
 
