@@ -98,13 +98,19 @@ function noScreenshot(options, overlayId) {
 
     if (disableInspectElement) {
         document.addEventListener('keydown', event => {
-            if ((event.ctrlKey && event.shiftKey && event.key === 'i') || (event.metaKey && event.shiftKey && event.key === 'i')) {
-                event.preventDefault();
+            if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'i') {
+              event.preventDefault();
             }
-            if ((event.ctrlKey && event.shiftKey && event.key === 'c') || (event.metaKey && event.shiftKey && event.key === 'c')) {
-                event.preventDefault();
+            if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'c') {
+              event.preventDefault();
             }
-        });
+            if (event.keyCode === 123) {
+              event.preventDefault();
+            }
+          });
+          document.addEventListener('contextmenu', event => {
+            event.preventDefault();
+          });
     }
 
     if (disablePrintScreen) {
@@ -226,7 +232,7 @@ function overlayScreen(overlayId) {
         document.getElementById('no-screenshot-overlay').style.display = 'flex';
         return;
     }
-    
+
     const overlay = document.createElement('div');
     overlay.id = 'no-screenshot-overlay';
     overlay.style.position = 'fixed';

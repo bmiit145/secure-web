@@ -1,6 +1,6 @@
 {
   "name": "secure-web",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Secure-Web is an npm package that prevents users from taking screenshots of your web page by securing it against various methods of screenshot capture. With customizable options to tailor the security measures according to your needs, Secure-Web ensures that your sensitive information remains protected and inaccessible to unauthorized individuals. Embrace the power of Secure-Web and take control of your online security today.",
   "main": "dist/secure-web.js",
   "scripts": {
