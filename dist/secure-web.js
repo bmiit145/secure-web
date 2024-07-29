@@ -20,6 +20,11 @@ function noScreenshot(options, overlayId) {
         ctrlOverlay = true,
         altOverlay = false,
         shiftOverlay = false,
+        // new at 1.2.2
+        clearConsole = true,
+        clearSensitiveContent = [
+            'body'
+        ],
     } = options;
 
     if (disableRightClick) {
@@ -97,11 +102,25 @@ function noScreenshot(options, overlayId) {
     }
 
     if (disableInspectElement) {
+
+        // Prevent certain keyboard shortcuts
         document.addEventListener('keydown', event => {
-            if ((event.ctrlKey && event.shiftKey && event.key === 'i') || (event.metaKey && event.shiftKey && event.key === 'i')) {
+            if ((event.ctrlKey && event.shiftKey && event.key === 'I') ||
+                (event.metaKey && event.shiftKey && event.key === 'I') ||
+                (event.ctrlKey && event.shiftKey && event.key === 'C') ||
+                (event.metaKey && event.shiftKey && event.key === 'C') ||
+                event.key === 'F12') {
                 event.preventDefault();
             }
         });
+
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // clear console every secound
+        clearConsoleArea();
+
+        // detect if inspect element open
+        detectInspectElement(clearSensitiveContent);
     }
 
     if (disablePrintScreen) {
@@ -118,6 +137,7 @@ function noScreenshot(options, overlayId) {
         })
 
     }
+
     if (disableFunctionKeys) {
         document.addEventListener('keydown', event => {
             if (event.key === 'F1' || event.key === 'F2' || event.key === 'F3' || event.key === 'F5' || event.key === 'F6' || event.key === 'F7' || event.key === 'F8' || event.key === 'F9' || event.key === 'F10' || event.key === 'F11' || event.key === 'F12') {
@@ -136,7 +156,7 @@ function noScreenshot(options, overlayId) {
 
     if (mouseLeave) {
         document.addEventListener('mouseleave', () => {
-            overlayScreen(overlayId); // Overlay when cursor leaves the window
+            overlayScreen(overlayId);
         });
     }
 
@@ -170,9 +190,13 @@ function noScreenshot(options, overlayId) {
         });
     }
 
-    // Disable pointer events on body while the overlay is active
+    if(clearConsole){
+        clearConsoleArea();
+    }
 
-    document.body.style.pointerEvents = 'none';
+    // Disable pointer events on body while the overlay is active
+    // document.body.style.pointerEvents = 'none';
+    document.body.style.pointerEvents = 'auto';
     document.addEventListener('keydown', escListener);
 
 
@@ -200,7 +224,7 @@ function overlayScreen(overlayId) {
             customOverlay.style.width = '100%';
             customOverlay.style.height = '100%';
             customOverlay.style.zIndex = '9999';
-            customOverlay.style.display = 'flex';
+            customOverlay.style.display = 'block';
             customOverlay.style.alignItems = 'center';
             customOverlay.style.justifyContent = 'center';
 
@@ -219,6 +243,11 @@ function overlayScreen(overlayId) {
 
             return;
         }
+    }
+
+    if (document.getElementById('no-screenshot-overlay')) {
+        document.getElementById('no-screenshot-overlay').style.display = 'flex';
+        return;
     }
 
     const overlay = document.createElement('div');
@@ -245,6 +274,7 @@ function overlayScreen(overlayId) {
 
     overlay.appendChild(message);
     document.body.appendChild(overlay);
+    document.body.style.pointerEvents = 'none';
 }
 
 
@@ -254,6 +284,9 @@ function HideOverlayScreen(overlayId) {
         if (customOverlay) {
             customOverlay.style.display = 'none'; // Hide the custom overlay
             document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
+            if(clearSensitiveContent) {
+                location.reload();
+            }
             return;
         }
     }
@@ -261,6 +294,74 @@ function HideOverlayScreen(overlayId) {
     document.body.removeChild(overlay);
     document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
     //document.removeEventListener('keydown', escListener);
+    if(clearSensitiveContent) {
+        location.reload();
+    }
+}
+
+
+function clearConsoleArea(){
+    var checkStatus;
+    var element = document.createElement('any');
+    element.__defineGetter__('id', function() {
+        checkStatus = 'on';
+    });
+
+    setInterval(function() {
+        checkStatus = 'off';
+        console.log(element);
+        console.clear();
+    }, 1000);
+}
+
+
+function clearSensitiveData(selector) {
+    if (selector) {
+        if (Array.isArray(selector)) {
+            selector.forEach(sel => {
+                const elements = document.querySelectorAll(sel);
+                elements.forEach(el => el.innerHTML = '');
+            });
+        } else if (typeof selector === 'string') {
+            const element = document.querySelector(selector);
+            if (element) {
+                element.innerHTML = '';
+            }
+        }
+    }
+}
+
+
+function detectInspectElement(clearSensitiveContent){
+    (function () {
+        let devtoolsOpen = false;
+        const detectDevTools = () => {
+            const threshold = 160;
+            const isDevToolsOpen = () => {
+                // Detect if the developer tools are open by checking dimensions
+                const widthDiff = window.outerWidth - window.innerWidth;
+                const heightDiff = window.outerHeight - window.innerHeight;
+                return widthDiff > threshold || heightDiff > threshold;
+            };
+
+            if (isDevToolsOpen()) {
+                if (!devtoolsOpen) {
+                    devtoolsOpen = true;
+                    alert('Developer tools are open!');
+                    console.warn('Developer tools are open!');
+                    overlayScreen(overlayId);
+                    clearSensitiveData(clearSensitiveContent);
+                }
+            } else {
+                if (devtoolsOpen) {
+                    devtoolsOpen = false;
+                    HideOverlayScreen(overlayId);
+                }
+            }
+        };
+        // Run the check every second
+        setInterval(detectDevTools, 1000);
+    })();
 }
 
 function handleTouchStart(event) {
