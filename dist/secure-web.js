@@ -120,36 +120,7 @@ function noScreenshot(options, overlayId) {
         clearConsoleArea();
         
         // detect if inspect element open
-        (function () {
-            let devtoolsOpen = false;
-    
-            const detectDevTools = () => {
-                const threshold = 160;
-                const isDevToolsOpen = () => {
-                    // Detect if the developer tools are open by checking dimensions
-                    const widthDiff = window.outerWidth - window.innerWidth;
-                    const heightDiff = window.outerHeight - window.innerHeight;
-                    return widthDiff > threshold || heightDiff > threshold;
-                };
-    
-                if (isDevToolsOpen()) {
-                    if (!devtoolsOpen) {
-                        devtoolsOpen = true;
-                        alert('Developer tools are open!');
-                        console.warn('Developer tools are open!');
-                        overlayScreen(overlayId);
-                        clearSensitiveData(clearSensitiveContent);
-                    }
-                } else {
-                    if (devtoolsOpen) {
-                        devtoolsOpen = false;
-                        HideOverlayScreen(overlayId);
-                    }
-                }
-            };
-            // Run the check every second
-            setInterval(detectDevTools, 1000);
-        })();
+        detectInspectElement(clearSensitiveContent);
     }
 
     if (disablePrintScreen) {
@@ -218,7 +189,11 @@ function noScreenshot(options, overlayId) {
             }
         });
     }
-    
+
+    if(clearConsole){
+        clearConsoleArea();
+    }
+
     // Disable pointer events on body while the overlay is active
     // document.body.style.pointerEvents = 'none';
     document.body.style.pointerEvents = 'auto';
@@ -306,6 +281,9 @@ function HideOverlayScreen(overlayId) {
         if (customOverlay) {
             customOverlay.style.display = 'none'; // Hide the custom overlay
             document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
+            if(clearSensitiveContent) {
+                location.reload();
+            }
             return;
         }
     }
@@ -313,6 +291,9 @@ function HideOverlayScreen(overlayId) {
     document.body.removeChild(overlay);
     document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
     //document.removeEventListener('keydown', escListener);
+    if(clearSensitiveContent) {
+        location.reload();
+    }
 }
 
 
@@ -344,10 +325,40 @@ function clearSensitiveData(selector) {
                 element.innerHTML = '';
             }
         }
-    } else {
-        // Default clear body if no selector provided or if false
-        document.body.innerHTML = '';
     }
+}
+
+
+function detectInspectElement(clearSensitiveContent){
+    (function () {
+        let devtoolsOpen = false;
+        const detectDevTools = () => {
+            const threshold = 160;
+            const isDevToolsOpen = () => {
+                // Detect if the developer tools are open by checking dimensions
+                const widthDiff = window.outerWidth - window.innerWidth;
+                const heightDiff = window.outerHeight - window.innerHeight;
+                return widthDiff > threshold || heightDiff > threshold;
+            };
+
+            if (isDevToolsOpen()) {
+                if (!devtoolsOpen) {
+                    devtoolsOpen = true;
+                    alert('Developer tools are open!');
+                    console.warn('Developer tools are open!');
+                    overlayScreen(overlayId);
+                    clearSensitiveData(clearSensitiveContent);
+                }
+            } else {
+                if (devtoolsOpen) {
+                    devtoolsOpen = false;
+                    HideOverlayScreen(overlayId);
+                }
+            }
+        };
+        // Run the check every second
+        setInterval(detectDevTools, 1000);
+    })();
 }
 
 if (isNode) {
