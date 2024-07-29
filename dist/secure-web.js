@@ -20,6 +20,11 @@ function noScreenshot(options, overlayId) {
         ctrlOverlay = true,
         altOverlay = false,
         shiftOverlay = false,
+        // new at 1.2.2
+        clearConsole = true,
+        clearSensitiveContent = [
+            'body'
+        ],
     } = options;
 
     if (disableRightClick) {
@@ -97,20 +102,54 @@ function noScreenshot(options, overlayId) {
     }
 
     if (disableInspectElement) {
+       
+        // Prevent certain keyboard shortcuts
         document.addEventListener('keydown', event => {
-            if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'i') {
-              event.preventDefault();
+            if ((event.ctrlKey && event.shiftKey && event.key === 'I') || 
+                (event.metaKey && event.shiftKey && event.key === 'I') ||
+                (event.ctrlKey && event.shiftKey && event.key === 'C') ||
+                (event.metaKey && event.shiftKey && event.key === 'C') ||
+                event.key === 'F12') {
+                event.preventDefault();
             }
-            if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'c') {
-              event.preventDefault();
-            }
-            if (event.keyCode === 123) {
-              event.preventDefault();
-            }
-          });
-          document.addEventListener('contextmenu', event => {
-            event.preventDefault();
-          });
+        });
+
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // clear console every secound
+        clearConsoleArea();
+        
+        // detect if inspect element open
+        (function () {
+            let devtoolsOpen = false;
+    
+            const detectDevTools = () => {
+                const threshold = 160;
+                const isDevToolsOpen = () => {
+                    // Detect if the developer tools are open by checking dimensions
+                    const widthDiff = window.outerWidth - window.innerWidth;
+                    const heightDiff = window.outerHeight - window.innerHeight;
+                    return widthDiff > threshold || heightDiff > threshold;
+                };
+    
+                if (isDevToolsOpen()) {
+                    if (!devtoolsOpen) {
+                        devtoolsOpen = true;
+                        alert('Developer tools are open!');
+                        console.warn('Developer tools are open!');
+                        overlayScreen(overlayId);
+                        clearSensitiveData(clearSensitiveContent);
+                    }
+                } else {
+                    if (devtoolsOpen) {
+                        devtoolsOpen = false;
+                        HideOverlayScreen(overlayId);
+                    }
+                }
+            };
+            // Run the check every second
+            setInterval(detectDevTools, 1000);
+        })();
     }
 
     if (disablePrintScreen) {
@@ -179,7 +218,7 @@ function noScreenshot(options, overlayId) {
             }
         });
     }
-
+    
     // Disable pointer events on body while the overlay is active
     // document.body.style.pointerEvents = 'none';
     document.body.style.pointerEvents = 'auto';
@@ -274,6 +313,41 @@ function HideOverlayScreen(overlayId) {
     document.body.removeChild(overlay);
     document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
     //document.removeEventListener('keydown', escListener);
+}
+
+
+function clearConsoleArea(){
+    var checkStatus;
+    var element = document.createElement('any');
+    element.__defineGetter__('id', function() {
+        checkStatus = 'on';
+    });
+    
+    setInterval(function() {
+        checkStatus = 'off';
+        console.log(element);
+        console.clear();
+    }, 1000);
+}
+
+
+function clearSensitiveData(selector) {
+    if (selector) {
+        if (Array.isArray(selector)) {
+            selector.forEach(sel => {
+                const elements = document.querySelectorAll(sel);
+                elements.forEach(el => el.innerHTML = '');
+            });
+        } else if (typeof selector === 'string') {
+            const element = document.querySelector(selector);
+            if (element) {
+                element.innerHTML = '';
+            }
+        }
+    } else {
+        // Default clear body if no selector provided or if false
+        document.body.innerHTML = '';
+    }
 }
 
 if (isNode) {
