@@ -117,10 +117,11 @@ function noScreenshot(options, overlayId) {
         document.addEventListener('contextmenu', event => event.preventDefault());
 
         // clear console every secound
-        clearConsoleArea();
-
+        if(clearConsole) {
+            clearConsoleArea();
+        }
         // detect if inspect element open
-        detectInspectElement(clearSensitiveContent);
+        detectInspectElement(clearSensitiveContent , overlayId);
     }
 
     if (disablePrintScreen) {
@@ -205,7 +206,7 @@ function noScreenshot(options, overlayId) {
 
     function escListener(event) {
         if (event.key === 'Escape') {
-            HideOverlayScreen(overlayId);
+            HideOverlayScreen(overlayId , clearSensitiveContent);
             // document.body.removeChild(overlay);
             // document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
             //document.removeEventListener('keydown', escListener);
@@ -278,7 +279,7 @@ function overlayScreen(overlayId) {
 }
 
 
-function HideOverlayScreen(overlayId) {
+function HideOverlayScreen(overlayId , clearSensitiveContent = false) {
     if (overlayId) {
         const customOverlay = document.getElementById(overlayId);
         if (customOverlay) {
@@ -290,13 +291,13 @@ function HideOverlayScreen(overlayId) {
             return;
         }
     }
+    if(clearSensitiveContent) {
+        location.reload();
+    }
     var overlay = document.getElementById('no-screenshot-overlay');
     document.body.removeChild(overlay);
     document.body.style.pointerEvents = 'auto'; // Re-enable pointer events on body
     //document.removeEventListener('keydown', escListener);
-    if(clearSensitiveContent) {
-        location.reload();
-    }
 }
 
 
@@ -327,42 +328,107 @@ function clearSensitiveData(selector) {
             if (element) {
                 element.innerHTML = '';
             }
+        }else{
+            const element = document.querySelector('body');
+            element.innerHTML = '';
         }
     }
 }
 
 
-function detectInspectElement(clearSensitiveContent){
-    (function () {
-        let devtoolsOpen = false;
-        const detectDevTools = () => {
-            const threshold = 160;
-            const isDevToolsOpen = () => {
-                // Detect if the developer tools are open by checking dimensions
-                const widthDiff = window.outerWidth - window.innerWidth;
-                const heightDiff = window.outerHeight - window.innerHeight;
-                return widthDiff > threshold || heightDiff > threshold;
-            };
+// function detectInspectElement(clearSensitiveContent , overlayId){
+//     let threshold = 160;
+//     // let threshold = Math.max(window.outerWidth - window.innerWidth, window.outerHeight - window.innerHeight) + 10;
+//
+//     // Initial adjustment of the threshold
+//     window.addEventListener('resize', () => {
+//         threshold = Math.max(window.outerWidth - window.innerWidth, window.outerHeight - window.innerHeight) - 10;
+//         console.log('Resize threshold', threshold);
+//     });
+//
+//     // trigger resize event
+//     (function () {
+//         // threshold = Math.max(window.outerWidth - window.innerWidth, window.outerHeight - window.innerHeight) + 10;
+//         let devtoolsOpen = false;
+//         const detectDevTools = () => {
+//             console.log('threshold', threshold);
+//             const isDevToolsOpen = () => {
+//                 // Detect if the developer tools are open by checking dimensions
+//                 const widthDiff =  Math.abs( window.outerWidth - window.innerWidth);
+//                 const heightDiff =  Math.abs( window.outerHeight - window.innerHeight);
+//                 console.log('widthDiff', widthDiff);
+//                 console.log('heightDiff', heightDiff);
+//                 return widthDiff > threshold || heightDiff > threshold;
+//             };
+//
+//             if (isDevToolsOpen()) {
+//                 if (!devtoolsOpen) {
+//                     devtoolsOpen = true;
+//                     alert('Developer tools are open!');
+//                     console.warn('Developer tools are open!');
+//                     clearSensitiveData(clearSensitiveContent);
+//                     overlayScreen(overlayId);
+//                 }
+//             } else {
+//                 if (devtoolsOpen) {
+//                     devtoolsOpen = false;
+//                     HideOverlayScreen(overlayId , clearSensitiveContent);
+//                 }
+//             }
+//         };
+//
+//         // Run the check every second
+//         setInterval(detectDevTools, 1000);
+//     })();
+// }
 
-            if (isDevToolsOpen()) {
-                if (!devtoolsOpen) {
-                    devtoolsOpen = true;
-                    alert('Developer tools are open!');
-                    console.warn('Developer tools are open!');
-                    overlayScreen(overlayId);
-                    clearSensitiveData(clearSensitiveContent);
-                }
-            } else {
-                if (devtoolsOpen) {
-                    devtoolsOpen = false;
-                    HideOverlayScreen(overlayId);
-                }
+
+function detectInspectElement(clearSensitiveContent, overlayId) {
+    let threshold = Math.max(window.outerWidth - window.innerWidth, window.outerHeight - window.innerHeight) + 10;
+    let devtoolsOpen = false;
+
+    // Function to check if DevTools is open
+    const isDevToolsOpen = () => {
+        const widthDiff = Math.abs(window.outerWidth - window.innerWidth);
+        const heightDiff = Math.abs(window.outerHeight - window.innerHeight);
+        console.log('widthDiff', widthDiff);
+        console.log('heightDiff', heightDiff);
+
+        // Check for width or height differences above threshold
+        return widthDiff > threshold || heightDiff > threshold;
+    };
+
+    // Function to check for debugger
+    const detectDebugger = () => {
+        const start = Date.now();
+        debugger; // This will pause if DevTools is open
+        const end = Date.now();
+        return end - start > 100; // If more than 100ms passed, DevTools is likely open
+    };
+
+    // Function to detect DevTools and take action
+    const detectDevTools = () => {
+        if (isDevToolsOpen() || detectDebugger()) {
+            if (!devtoolsOpen) {
+                devtoolsOpen = true;
+                alert('Developer tools are open!');
+                console.warn('Developer tools are open!');
+                clearSensitiveData(clearSensitiveContent);
+                overlayScreen(overlayId);
             }
-        };
-        // Run the check every second
-        setInterval(detectDevTools, 1000);
-    })();
+        } else {
+            if (devtoolsOpen) {
+                devtoolsOpen = false;
+                HideOverlayScreen(overlayId, clearSensitiveContent);
+            }
+        }
+    };
+
+    // Initial check and setInterval to keep checking
+    detectDevTools();
+    setInterval(detectDevTools, 1000);
 }
+
 
 function handleTouchStart(event) {
     const now = new Date().getTime();
@@ -382,4 +448,3 @@ if (isNode) {
 }else{
     window.noScreenshot = noScreenshot;
 }
-
