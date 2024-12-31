@@ -22,9 +22,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
-      - name: Get package info
-        id: package
-        uses: bmiit145/secure-web@v1.2.4    
+      # - name: Get package info
+      #   id: package
+      #   uses: bmiit145/secure-web@v1.2.4    
 
       - name: Add LATEST tag for the published package if this is not a -rc version
         if: steps.package.outputs.is-release-candidate == 'false'
